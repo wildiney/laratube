@@ -1,8 +1,35 @@
 import './App.css'
-import VIDEOS from './data/videos.json'
+// import VIDEOS from './data/videos.json'
 import VideoList from './components/videoList'
+import type { Video } from './model/video'
+import { useState, useEffect } from 'react'
 
 function App () {
+  const [videos, setVideos] = useState<Video[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/wildiney/laratube/master/src/data/videos.json')
+        if (!response.ok) {
+          throw new Error("Erro ao carregar dados")
+        }
+        const data = await response.json()
+        setVideos(data)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message)
+        } else {
+          setError("Erro desconhecido")
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchVideos()
+  }, [])
 
 
 
@@ -20,9 +47,12 @@ function App () {
         </svg>
         <h1>LaraTube</h1>
       </header>
-      <VideoList videos={VIDEOS} />
+      {error ? <p>{error}</p> : null}
+      {loading ? <p>Carregando...</p> : <VideoList videos={videos} />}
     </>
   )
 }
 
 export default App
+
+

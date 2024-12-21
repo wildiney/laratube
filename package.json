@@ -1,5 +1,6 @@
 {
   "name": "laratube",
+  "homepage": "https://wildiney.github.io/laratube",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -1,5 +1,4 @@
 #root {
-  max-width: 960px;
   width: 100%;
   margin: 0 auto;
   padding: 1rem;
@@ -14,14 +13,17 @@ h1 {
   margin-bottom: 3rem;
   padding: 0;
 }
-
+.videoList {
+  gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}
 .videoItem {
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1rem;
   border-radius: 0.5rem;
-  margin-bottom: 1rem;
   background-color: rgba(255, 255, 255, 0.04);
 }
 
