@@ -44,6 +44,7 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
       ? hidden.filter((hide) => hide !== id)
       : [...hidden, id];
     setHidden(updatedHidden);
+    setLoadedVideos((prevVideos) => prevVideos.filter((video) => video.id !== id))
     updateStorage(favorites, updatedHidden);
   };
 
