@@ -32,20 +32,30 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
   };
 
   const toggleFavorite = (id: string) => {
-    const updatedFavorites = favorites.includes(id)
-      ? favorites.filter((fav) => fav !== id)
-      : [...favorites, id];
-    setFavorites(updatedFavorites);
-    updateStorage(updatedFavorites, hidden);
+    const videoToHide = loadedVideos.find(video => video.id === id)
+    if (videoToHide && window.confirm(`Tem certeza que deseja ocultar o video ${videoToHide.title}?`)) {
+      const updatedFavorites = favorites.includes(id)
+        ? favorites.filter((fav) => fav !== id)
+        : [...favorites, id];
+      setFavorites(updatedFavorites);
+      updateStorage(updatedFavorites, hidden);
+    }
   };
 
   const toggleHidden = (id: string) => {
-    const updatedHidden = hidden.includes(id)
-      ? hidden.filter((hide) => hide !== id)
-      : [...hidden, id];
-    setHidden(updatedHidden);
-    setLoadedVideos((prevVideos) => prevVideos.filter((video) => video.id !== id))
-    updateStorage(favorites, updatedHidden);
+    const videoToHide = loadedVideos.find((video) => video.id === id);
+
+    if (
+      videoToHide &&
+      window.confirm(`Tem certeza que deseja ocultar o vídeo "${videoToHide.title}"?`)
+    ) {
+      const updatedHidden = hidden.includes(id)
+        ? hidden.filter((hide) => hide !== id)
+        : [...hidden, id];
+      setHidden(updatedHidden);
+      setLoadedVideos((prevVideos) => prevVideos.filter((video) => video.id !== id));
+      updateStorage(favorites, updatedHidden);
+    }
   };
 
   return (
@@ -60,7 +70,7 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
               </button>
               {favorites.includes(video.id) ? null : (
                 <button onClick={() => toggleHidden(video.id)}>
-                  {hidden.includes(video.id) ? "" : "✖"}
+                  {hidden.includes(video.id) ? "❌" : "✖"}
                 </button>
               )}
             </span>
