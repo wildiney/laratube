@@ -1,60 +1,62 @@
+<!-- markdownlint-disable MD029 -->
+
 # LaraTube
 
-LaraTube é uma aplicação de seleção de videos do YouTube para a minha filha.
+LaraTube is an application that lets users to display selected YouTube videos and either delete or keep the ones they like the most. It uses the browser's local database to keep track of user's choices.
 
-## Funcionalidades
+## Features
 
-- Reprodução de vídeos
-- Sistema de likes e dislikes
+- Video playback
+- Like and dislike system
 
-## Requisitos
+## Requirements
 
 - NodeJS
 
-## Instalação
+## Installation
 
-1. Clone o repositório:
+1. Clone the repository:
 
   ```sh
   git clone https://github.com/wildiney/LaraTube.git
   ```
 
-2. Navegue até o diretório do projeto:
+2. Navigate to the project directory:
 
   ```sh
   cd LaraTube
   ```
 
-3. Instale as dependências:
+3. Install the dependencies:
 
   ```sh
   npm install
   ```
 
-4. Configure o arquivo `.env`:
+4. Configure the `.env` file:
 
   ```sh
   cp .env.example .env
   ```
 
-## Uso
+## Usage
 
-1. Inicie o servidor local:
+1. Start the local server:
 
   ```sh
   npm start
   ```
 
-2. Acesse a aplicação em `http://localhost:3000`.
+2. Access the application at `http://localhost:3000`.
 
-## Contribuição
+## Contribution
 
-1. Faça um fork do projeto
-2. Crie uma nova branch (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova funcionalidade'`)
-4. Faça o push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a new branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-## Licença
+## License
 
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
