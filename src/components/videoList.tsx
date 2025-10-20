@@ -2,27 +2,35 @@ import { useEffect, useState } from "react";
 import type { Video } from "../model/video";
 
 const VideoList = ({ videos }: { videos: Video[] }) => {
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [hidden, setHidden] = useState<string[]>([]);
-  const [loadedVideos, setLoadedVideos] = useState<Video[]>([]); // Armazena os vídeos carregados
-  const [loadingIndex, setLoadingIndex] = useState(0); // Índice do vídeo sendo carregado atualmente
-
-  useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
-    setFavorites(savedData.favorites || []);
-    setHidden(savedData.hidden || []);
-  }, []);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
+      return savedData.favorites || [];
+    } catch {
+      return [];
+    }
+  });
+  const [hidden, setHidden] = useState<string[]>(() => {
+    try {
+      const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
+      return savedData.hidden || [];
+    } catch {
+      return [];
+    }
+  });
+  const [loadedVideos, setLoadedVideos] = useState<Video[]>([]);
+  const [loadingIndex, setLoadingIndex] = useState(0);
 
   useEffect(() => {
     if (loadingIndex < videos.length) {
       const timer = setTimeout(() => {
         const video = videos[loadingIndex];
         if (!hidden.includes(video.id)) {
-          setLoadedVideos((prev) => [...prev, video]); // Adiciona o próximo vídeo
+          setLoadedVideos((prev) => [...prev, video]);
         }
-        setLoadingIndex((prev) => prev + 1); // Incrementa o índice
-      }, 500); // Tempo entre carregamentos (ajustável)
-      return () => clearTimeout(timer); // Limpa o timeout
+        setLoadingIndex((prev) => prev + 1);
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [loadingIndex, videos, hidden]);
 
