@@ -2,22 +2,22 @@ import { useEffect, useState } from "react";
 import type { Video } from "../model/video";
 
 const VideoList = ({ videos }: { videos: Video[] }) => {
-  const [favorites, setFavorites] = useState<string[]>(() => {
+  // Função para ler dados do localStorage
+  const readStorageData = () => {
     try {
       const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
-      return savedData.favorites || [];
+      return {
+        favorites: savedData.favorites || [],
+        hidden: savedData.hidden || []
+      };
     } catch {
-      return [];
+      return { favorites: [], hidden: [] };
     }
-  });
-  const [hidden, setHidden] = useState<string[]>(() => {
-    try {
-      const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
-      return savedData.hidden || [];
-    } catch {
-      return [];
-    }
-  });
+  };
+
+  const initialData = readStorageData();
+  const [favorites, setFavorites] = useState<string[]>(initialData.favorites);
+  const [hidden, setHidden] = useState<string[]>(initialData.hidden);
   const [loadedVideos, setLoadedVideos] = useState<Video[]>([]);
   const [loadingIndex, setLoadingIndex] = useState(0);
 
