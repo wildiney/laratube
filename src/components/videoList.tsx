@@ -1,105 +1,83 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Video } from "../model/video";
+import VideoModal from "./VideoModal";
 
 const VideoList = ({ videos }: { videos: Video[] }) => {
-  // Função para ler dados do localStorage
-  const readStorageData = () => {
-    try {
-      const savedData = JSON.parse(localStorage.getItem("laratube") || "{}");
-      return {
-        favorites: savedData.favorites || [],
-        hidden: savedData.hidden || []
-      };
-    } catch {
-      return { favorites: [], hidden: [] };
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+
+  const toggleFavorite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+    );
+  };
+
+  const toggleHidden = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const video = videos.find((v) => v.id === id);
+    if (video && window.confirm(`Ocultar "${video.title}"?`)) {
+      setHidden((prev) =>
+        prev.includes(id) ? prev.filter((h) => h !== id) : [...prev, id]
+      );
     }
   };
 
-  const initialData = readStorageData();
-  const [favorites, setFavorites] = useState<string[]>(initialData.favorites);
-  const [hidden, setHidden] = useState<string[]>(initialData.hidden);
-  const [loadedVideos, setLoadedVideos] = useState<Video[]>([]);
-  const [loadingIndex, setLoadingIndex] = useState(0);
-
-  useEffect(() => {
-    if (loadingIndex < videos.length) {
-      const timer = setTimeout(() => {
-        const video = videos[loadingIndex];
-        if (!hidden.includes(video.id)) {
-          setLoadedVideos((prev) => [...prev, video]);
-        }
-        setLoadingIndex((prev) => prev + 1);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [loadingIndex, videos, hidden]);
-
-  const updateStorage = (favorites: string[], hidden: string[]) => {
-    const data = { favorites, hidden };
-    localStorage.setItem("laratube", JSON.stringify(data));
-  };
-
-  const toggleFavorite = (id: string) => {
-    const videoToHide = loadedVideos.find(video => video.id === id)
-    if (videoToHide && window.confirm(`Tem certeza que deseja ocultar o video ${videoToHide.title}?`)) {
-      const updatedFavorites = favorites.includes(id)
-        ? favorites.filter((fav) => fav !== id)
-        : [...favorites, id];
-      setFavorites(updatedFavorites);
-      updateStorage(updatedFavorites, hidden);
-    }
-  };
-
-  const toggleHidden = (id: string) => {
-    const videoToHide = loadedVideos.find((video) => video.id === id);
-
-    if (
-      videoToHide &&
-      window.confirm(`Tem certeza que deseja ocultar o vídeo "${videoToHide.title}"?`)
-    ) {
-      const updatedHidden = hidden.includes(id)
-        ? hidden.filter((hide) => hide !== id)
-        : [...hidden, id];
-      setHidden(updatedHidden);
-      setLoadedVideos((prevVideos) => prevVideos.filter((video) => video.id !== id));
-      updateStorage(favorites, updatedHidden);
-    }
-  };
+  const visibleVideos = videos.filter((v) => !hidden.includes(v.id));
 
   return (
-    <div className="videoList">
-      {loadedVideos.map((video) => (
-        <div key={video.id} className="videoItem">
-          <div className="videoHeader">
-            <h2>{video.title}</h2>
-            <span className="buttons">
-              <button onClick={() => toggleFavorite(video.id)}>
-                {favorites.includes(video.id) ? "❤️" : "🤍"}
-              </button>
-              {favorites.includes(video.id) ? null : (
-                <button onClick={() => toggleHidden(video.id)}>
-                  {hidden.includes(video.id) ? "❌" : "✖"}
+    <>
+      <div className="videoGrid">
+        {visibleVideos.map((video) => (
+          <div
+            key={video.id}
+            className="videoCard"
+            onClick={() => setSelectedVideo(video)}
+          >
+            <div className="videoThumbnail">
+              <img src={`https://img.youtube.com/vi/${video.url.split("/")[4]}/maxresdefault.jpg`} alt="Thumbnail" style={{ objectFit: "cover", aspectRatio: "16/9", width: "100%" }} />
+            </div>
+            <div className="videoCardContent">
+              <h3>{video.title}</h3>
+              <div className="videoCardActions">
+                <button
+                  className={`favBtn ${favorites.includes(video.id) ? "active" : ""
+                    }`}
+                  onClick={(e) => toggleFavorite(video.id, e)}
+                  title="Favoritar"
+                >
+                  {favorites.includes(video.id) ? "❤️" : "🤍"}
                 </button>
-              )}
-            </span>
+                <button
+                  className="hideBtn"
+                  onClick={(e) => toggleHidden(video.id, e)}
+                  title="Ocultar"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
           </div>
-          <iframe
-            width="100%"
-            src={video.url}
-            title={video.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {loadingIndex < videos.length && (
-        <div className="loading">Carregando vídeos...</div>
+      {selectedVideo && (
+        <VideoModal
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          isFavorite={favorites.includes(selectedVideo.id)}
+          onToggleFavorite={() => {
+            setFavorites((prev) =>
+              prev.includes(selectedVideo.id)
+                ? prev.filter((fav) => fav !== selectedVideo.id)
+                : [...prev, selectedVideo.id]
+            );
+          }}
+        />
       )}
-    </div>
+    </>
   );
 };
 
-export default VideoList
+export default VideoList;
