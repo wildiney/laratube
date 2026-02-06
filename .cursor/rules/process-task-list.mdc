@@ -1,0 +1,39 @@
+---
+description: Task list management for PRD progress tracking
+globs: ["**/*.md"]
+alwaysApply: true
+---
+
+# Task List Management
+
+Guidelines for managing task lists in markdown files to track progress on completing a PRD.
+
+## Task Implementation
+- **One sub-task at a time:** Do **NOT** start the next sub-task until you ask the user for permission and they say "yes" or "y".
+- **Completion protocol:** 
+  1. When you finish a **sub-task**, immediately mark it as completed by changing `[ ]` to `[x]`.
+  2. If **all** subtasks underneath a parent task are now `[x]`, also mark the **parent task** as completed.
+- Stop after each sub-task and wait for the user's go-ahead.
+- **New subtasks:** Ask the user for confirmation before adding any new subtasks.
+
+## Task List Maintenance
+1. **Update the task list as you work:** 
+    - Mark tasks and subtasks as completed `[x]` per the protocol above.
+    - Add new tasks only with explicit user approval.
+2. **Maintain the "Relevant Files" section:**
+    - List every file created or modified.
+    - Give each file a one-line description of its purpose.
+
+## AI Instructions
+1. Before starting work, check which sub-task is next.
+2. After implementing a sub-task, update the file **and pause for user approval** before proceeding.
+3. Follow the completion protocol:
+   - Mark each finished **sub-task** `[x]`.
+   - Mark the **parent task** `[x]` once **all** its subtasks are `[x]`.
+4. Add newly discovered tasks only after user confirmation.
+5. Keep the "Relevant Files" section accurate and up to date.
+6. Define “significant work” as:
+   - Completion of a sub-task,
+   - Implementation of a PRD section, or
+   - Major refactoring affecting multiple files.
+7. Never make automatic changes to the task list without explicit user consent.
