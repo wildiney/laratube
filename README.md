@@ -1,62 +1,52 @@
-<!-- markdownlint-disable MD029 -->
-
 # LaraTube
 
-LaraTube is an application that lets users to display selected YouTube videos and either delete or keep the ones they like the most. It uses the browser's local database to keep track of user's choices.
+LaraTube is an application that allows kids and teenagers to watch a curated list of YouTube videos safely. It features a persistence system for favorites and hidden videos using the browser's `localStorage`.
 
 ## Features
 
-- Video playback
-- Like and dislike system
+- **Video Playback**: Curated list of videos.
+- **Favorites**: Mark videos with a heart ❤️ to keep them at the top and protect them from accidental hiding.
+- **Hide Videos**: Remove videos you don't want to see anymore (requires confirmation).
+- **Persistence**: Your choices are saved in your browser.
+- **Settings**: Clear all preferences and reset the app.
 
 ## Requirements
 
-- NodeJS
+- [Node.js](https://nodejs.org/)
+- [pnpm](https://pnpm.io/) (recommended)
 
 ## Installation
 
 1. Clone the repository:
-
-  ```sh
-  git clone https://github.com/wildiney/LaraTube.git
-  ```
-
+   ```sh
+   git clone https://github.com/wildiney/LaraTube.git
+   ```
 2. Navigate to the project directory:
-
-  ```sh
-  cd LaraTube
-  ```
-
-3. Install the dependencies:
-
-  ```sh
-  npm install
-  ```
-
-4. Configure the `.env` file:
-
-  ```sh
-  cp .env.example .env
-  ```
+   ```sh
+   cd LaraTube
+   ```
+3. Install dependencies:
+   ```sh
+   pnpm install
+   ```
 
 ## Usage
 
-1. Start the local server:
+1. Start the development server:
+   ```sh
+   pnpm run dev
+   ```
+2. Access the application at `http://localhost:5173`.
 
-  ```sh
-  npm start
-  ```
+## Testing
 
-2. Access the application at `http://localhost:3000`.
+This project uses [Vitest](https://vitest.dev/) for testing.
 
-## Contribution
-
-1. Fork the project
-2. Create a new branch (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Open a Pull Request
+- **Run all tests**: `pnpm run test`
+- **Watch mode**: `pnpm run test:watch`
+- **Coverage report**: `pnpm run test:coverage`
 
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
+

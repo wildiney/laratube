@@ -8,10 +8,70 @@
   position: relative;
 }
 
-h1 {
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.headerMain {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+header h1 {
   margin: 0;
-  margin-bottom: 3rem;
   padding: 0;
+}
+
+.settingsBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  color: inherit;
+}
+
+.settingsBtn:hover {
+  transform: rotate(45deg) scale(1.1);
+}
+
+.settingsModal {
+  max-width: 400px;
+  height: auto;
+  max-height: 80vh;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.clearBtn {
+  background-color: #F61C0D;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clearBtn:hover {
+  background-color: #d61a0b;
 }
 
 /* Grid de cards */

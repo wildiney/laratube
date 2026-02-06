@@ -1,30 +1,36 @@
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import type { Video } from "../model/video";
 import VideoModal from "./VideoModal";
+import {
+  loadPreferences,
+  savePreferences,
+  toggleFavorite as toggleFavoritePref,
+  hideVideo as hideVideoPref,
+} from "../lib/videoPreferences";
 
 const VideoList = ({ videos }: { videos: Video[] }) => {
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [hidden, setHidden] = useState<string[]>([]);
+  // Inicializa estado lendo do localStorage (lazy initialization)
+  const [preferences, setPreferences] = useState(() => loadPreferences());
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
-  const toggleFavorite = (id: string, e: React.MouseEvent) => {
+  const toggleFavorite = (id: string, e: MouseEvent) => {
     e.stopPropagation();
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
-    );
+    const newPrefs = toggleFavoritePref(id, preferences);
+    setPreferences(newPrefs);
+    savePreferences(newPrefs);
   };
 
-  const toggleHidden = (id: string, e: React.MouseEvent) => {
+  const toggleHidden = (id: string, e: MouseEvent) => {
     e.stopPropagation();
     const video = videos.find((v) => v.id === id);
     if (video && window.confirm(`Ocultar "${video.title}"?`)) {
-      setHidden((prev) =>
-        prev.includes(id) ? prev.filter((h) => h !== id) : [...prev, id]
-      );
+      const newPrefs = hideVideoPref(id, preferences);
+      setPreferences(newPrefs);
+      savePreferences(newPrefs);
     }
   };
 
-  const visibleVideos = videos.filter((v) => !hidden.includes(v.id));
+  const visibleVideos = videos.filter((v) => !preferences.hidden.has(v.id));
 
   return (
     <>
@@ -42,20 +48,24 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
               <h3>{video.title}</h3>
               <div className="videoCardActions">
                 <button
-                  className={`favBtn ${favorites.includes(video.id) ? "active" : ""
+                  className={`favBtn ${preferences.favorites.has(video.id) ? "active" : ""
                     }`}
                   onClick={(e) => toggleFavorite(video.id, e)}
                   title="Favoritar"
+                  aria-label="Favoritar"
                 >
-                  {favorites.includes(video.id) ? "❤️" : "🤍"}
+                  {preferences.favorites.has(video.id) ? "❤️" : "🤍"}
                 </button>
-                <button
-                  className="hideBtn"
-                  onClick={(e) => toggleHidden(video.id, e)}
-                  title="Ocultar"
-                >
-                  ✕
-                </button>
+                {!preferences.favorites.has(video.id) && (
+                  <button
+                    className="hideBtn"
+                    onClick={(e) => toggleHidden(video.id, e)}
+                    title="Ocultar"
+                    aria-label="Ocultar"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -66,13 +76,11 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
         <VideoModal
           video={selectedVideo}
           onClose={() => setSelectedVideo(null)}
-          isFavorite={favorites.includes(selectedVideo.id)}
+          isFavorite={preferences.favorites.has(selectedVideo.id)}
           onToggleFavorite={() => {
-            setFavorites((prev) =>
-              prev.includes(selectedVideo.id)
-                ? prev.filter((fav) => fav !== selectedVideo.id)
-                : [...prev, selectedVideo.id]
-            );
+            const newPrefs = toggleFavoritePref(selectedVideo.id, preferences);
+            setPreferences(newPrefs);
+            savePreferences(newPrefs);
           }}
         />
       )}
