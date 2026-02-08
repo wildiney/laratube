@@ -7,4 +7,6 @@
 - [x] 5.0 Adicionar testes mínimos (unit + integração) e garantir performance no carregamento
 - [x] 6.0 Corrigir erros de build no TypeScript (conflitos de tipos em testes)
   - [x] 6.1 Resolver erro TS2403 (redeclaração de window) e TS2739 (Storage mock incompleto).
-  - [x] 6.2 Validar build com `pnpm run build`.
+  - [x] 7.0 Exibir vídeos em ordem invertida (do mais recente/último no JSON para o primeiro)
+  - [x] 7.1 Inverter a lista de vídeos antes da filtragem/renderização em `VideoList.tsx`.
+  - [x] 7.2 Validar que a ordem foi alterada.
