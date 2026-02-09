@@ -30,7 +30,8 @@ const VideoList = ({ videos }: { videos: Video[] }) => {
     }
   };
 
-  const visibleVideos = videos.filter((v) => !preferences.hidden.has(v.id));
+  const reversedVideos = [...videos].reverse();
+  const visibleVideos = reversedVideos.filter((v) => !preferences.hidden.has(v.id));
 
   return (
     <>
