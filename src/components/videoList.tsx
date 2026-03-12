@@ -7,6 +7,7 @@ import {
   toggleFavorite as toggleFavoritePref,
   hideVideo as hideVideoPref,
 } from "../lib/videoPreferences";
+import { extractYoutubeId } from "../lib/youtube";
 
 interface VideoListProps {
   videos: Video[];
@@ -50,7 +51,7 @@ const VideoList = ({ videos, preferences, onUpdatePreferences }: VideoListProps)
     <>
       <div className="videoGrid">
         {visibleVideos.map((video) => {
-          const videoId = video.url.split("/")[4];
+          const videoId = extractYoutubeId(video.url);
           return (
           <div
             key={video.id}
@@ -58,16 +59,18 @@ const VideoList = ({ videos, preferences, onUpdatePreferences }: VideoListProps)
             onClick={() => setSelectedVideo(video)}
           >
             <div className="videoThumbnail">
-              <img
-                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                alt={video.title}
-                style={{ objectFit: "cover", aspectRatio: "16/9", width: "100%" }}
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  img.onerror = null;
-                  img.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-                }}
-              />
+              {videoId && (
+                <img
+                  src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                  alt={video.title}
+                  style={{ objectFit: "cover", aspectRatio: "16/9", width: "100%" }}
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    img.onerror = null;
+                    img.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                  }}
+                />
+              )}
             </div>
             <div className="videoCardContent">
               <h3>{video.title}</h3>

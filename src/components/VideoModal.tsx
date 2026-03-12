@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import type { Video } from "../model/video";
+import { isValidYoutubeEmbedUrl } from "../lib/youtube";
 
 interface VideoModalProps {
   video: Video;
@@ -47,16 +48,20 @@ const VideoModal = ({
           </div>
         </div>
         <div className="videoContainer">
-          <iframe
-            width="100%"
-            height="100%"
-            src={video.url}
-            title={video.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
+          {isValidYoutubeEmbedUrl(video.url) ? (
+            <iframe
+              width="100%"
+              height="100%"
+              src={video.url}
+              title={video.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <p>URL de vídeo inválida.</p>
+          )}
         </div>
       </div>
     </div>
