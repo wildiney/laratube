@@ -25,3 +25,6 @@ dist-ssr
 desktop.ini
 coverage
 coverage/*
+
+# Local Claude Code settings
+.claude/
