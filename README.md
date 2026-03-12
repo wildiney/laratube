@@ -1,52 +1,79 @@
 # LaraTube
 
-LaraTube is an application that allows kids and teenagers to watch a curated list of YouTube videos safely. It features a persistence system for favorites and hidden videos using the browser's `localStorage`.
+A child-safe YouTube video curator. Displays a curated list of videos, lets users mark favorites, hide unwanted videos, and filter by title — all preferences persisted in `localStorage` with no backend required.
+
+**Live:** [wildiney.github.io/laratube](https://wildiney.github.io/laratube/)
 
 ## Features
 
-- **Video Playback**: Curated list of videos.
-- **Favorites**: Mark videos with a heart ❤️ to keep them at the top and protect them from accidental hiding.
-- **Hide Videos**: Remove videos you don't want to see anymore (requires confirmation).
-- **Persistence**: Your choices are saved in your browser.
-- **Settings**: Clear all preferences and reset the app.
+- Responsive video grid with YouTube thumbnails (1 → 2 → 3 → 4 columns)
+- Real-time title search
+- Favorites-only filter
+- Hide videos with inline confirmation
+- Animated skeleton loader while fetching
+- Error state with retry button
+- Preferences persisted in `localStorage` (favorites and hidden)
+- Settings modal with stats and option to restore hidden videos without losing favorites
+- YouTube URL validation before rendering iframes
+
+## Stack
+
+- React 19 + TypeScript + Vite
+- Custom CSS with design tokens (no UI library)
+- Fonts: [Lexend](https://fonts.google.com/specimen/Lexend) + [DM Sans](https://fonts.google.com/specimen/DM+Sans)
+- Hosting: GitHub Pages (static, no backend)
 
 ## Requirements
 
 - [Node.js](https://nodejs.org/)
-- [pnpm](https://pnpm.io/) (recommended)
+- [pnpm](https://pnpm.io/)
 
-## Installation
+## Setup
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/wildiney/LaraTube.git
-   ```
-2. Navigate to the project directory:
-   ```sh
-   cd LaraTube
-   ```
-3. Install dependencies:
-   ```sh
-   pnpm install
-   ```
+```sh
+git clone https://github.com/wildiney/laratube.git
+cd laratube
+pnpm install
+```
 
-## Usage
+## Commands
 
-1. Start the development server:
-   ```sh
-   pnpm run dev
-   ```
-2. Access the application at `http://localhost:5173`.
+```bash
+pnpm run dev            # Dev server at http://localhost:5173
+pnpm run build          # TypeScript compile + Vite production build
+pnpm run deploy         # Build and deploy to GitHub Pages
+pnpm run test           # Run tests with Vitest
+pnpm run test:watch     # Run tests in watch mode
+pnpm run test:coverage  # Run tests with coverage report
+pnpm run lint           # Run ESLint
+```
 
-## Testing
+## Project structure
 
-This project uses [Vitest](https://vitest.dev/) for testing.
+```text
+src/
+├── App.tsx                   # Root component, data fetching, skeleton, error state
+├── components/
+│   ├── videoList.tsx         # Video grid, search, filters, empty states
+│   ├── VideoModal.tsx        # YouTube embed modal
+│   └── SettingsModal.tsx     # Settings, stats, and preference management
+├── lib/
+│   ├── videoPreferences.ts   # localStorage read/write logic
+│   └── youtube.ts            # YouTube URL validation and ID extraction
+├── model/video.ts            # Video type definition
+└── data/videos.json          # Curated video list (~200 entries)
+```
 
-- **Run all tests**: `pnpm run test`
-- **Watch mode**: `pnpm run test:watch`
-- **Coverage report**: `pnpm run test:coverage`
+## Adding videos
+
+Videos are fetched remotely from `src/data/videos.json` via the GitHub Raw URL. To add a video, append an entry and deploy.
+
+Each entry follows this format:
+
+```json
+{ "id": "string", "title": "string", "url": "https://www.youtube.com/embed/VIDEO_ID" }
+```
 
 ## License
 
-This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more details.
-
+MIT — see [LICENSE](LICENSE) for details.

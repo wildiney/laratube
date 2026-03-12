@@ -20,7 +20,7 @@ const renderVideoList = (videos: Video[], initialPrefs?: { favorites?: string[],
 
   const Wrapper = () => {
     const [preferences, setPreferences] = useState(initial)
-    return <VideoList videos={videos} preferences={preferences} onUpdatePreferences={setPreferences} />
+    return <VideoList videos={videos} preferences={preferences} onUpdatePreferences={setPreferences} onOpenSettings={() => {}} />
   }
 
   return render(<Wrapper />)
@@ -34,23 +34,23 @@ describe('VideoList - favoritos e exclusão', () => {
   it('não exibe botão de ocultar para vídeos favoritados', () => {
     renderVideoList([createVideo()])
 
-    expect(screen.getByRole('button', { name: /ocultar/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ocultar vídeo/i })).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: /favoritar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /adicionar aos favoritos/i }))
 
-    expect(screen.queryAllByRole('button', { name: /ocultar/i }).length).toBe(0)
+    expect(screen.queryAllByRole('button', { name: /ocultar vídeo/i }).length).toBe(0)
   })
 
   it('desfavoritar reexibe o botão de ocultar', () => {
     renderVideoList([createVideo()])
 
-    const favoriteButton = screen.getByRole('button', { name: /favoritar/i })
+    const favoriteButton = screen.getByRole('button', { name: /adicionar aos favoritos/i })
 
     fireEvent.click(favoriteButton)
-    expect(screen.queryAllByRole('button', { name: /ocultar/i }).length).toBe(0)
+    expect(screen.queryAllByRole('button', { name: /ocultar vídeo/i }).length).toBe(0)
 
-    fireEvent.click(favoriteButton)
-    expect(screen.getByRole('button', { name: /ocultar/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /remover dos favoritos/i }))
+    expect(screen.getByRole('button', { name: /ocultar vídeo/i })).toBeInTheDocument()
   })
 
   it('clicar em ocultar exibe confirmação inline', () => {

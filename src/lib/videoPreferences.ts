@@ -96,6 +96,14 @@ export function clearPreferences(): void {
 }
 
 /**
+ * Remove apenas os vídeos ocultos, mantendo os favoritos intactos.
+ */
+export function clearHidden(): void {
+  const prefs = loadPreferences()
+  savePreferences({ favorites: prefs.favorites, hidden: new Set<string>() })
+}
+
+/**
  * Alterna o estado de favorito de um vídeo, sem efeitos colaterais externos.
  * Retorna um novo objeto de preferências.
  */
