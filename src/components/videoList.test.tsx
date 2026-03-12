@@ -1,6 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { useState } from 'react'
 import type { Video } from '../model/video'
+import type { VideoPreferences } from '../lib/videoPreferences'
 import VideoList from './videoList'
 
 const createVideo = (overrides?: Partial<Video>): Video => ({
@@ -10,81 +12,83 @@ const createVideo = (overrides?: Partial<Video>): Video => ({
   ...overrides,
 })
 
+const renderVideoList = (videos: Video[], initialPrefs?: { favorites?: string[], hidden?: string[] }) => {
+  const initial: VideoPreferences = {
+    favorites: new Set(initialPrefs?.favorites ?? []),
+    hidden: new Set(initialPrefs?.hidden ?? []),
+  }
+
+  const Wrapper = () => {
+    const [preferences, setPreferences] = useState(initial)
+    return <VideoList videos={videos} preferences={preferences} onUpdatePreferences={setPreferences} />
+  }
+
+  return render(<Wrapper />)
+}
+
 describe('VideoList - favoritos e exclusão', () => {
   beforeEach(() => {
     window.localStorage.clear()
   })
 
-  it('não exibe botão de excluir para vídeos favoritados', () => {
-    const videos: Video[] = [createVideo()]
+  it('não exibe botão de ocultar para vídeos favoritados', () => {
+    renderVideoList([createVideo()])
 
-    render(<VideoList videos={videos} />)
+    expect(screen.getByRole('button', { name: /ocultar/i })).toBeInTheDocument()
 
-    const deleteButtonBefore = screen.getByRole('button', { name: /ocultar/i })
-    expect(deleteButtonBefore).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /favoritar/i }))
 
-    const favoriteButton = screen.getByRole('button', { name: /favoritar/i })
-    fireEvent.click(favoriteButton)
-
-    const deleteButtonsAfter = screen.queryAllByRole('button', { name: /ocultar/i })
-    expect(deleteButtonsAfter.length).toBe(0)
+    expect(screen.queryAllByRole('button', { name: /ocultar/i }).length).toBe(0)
   })
 
-  it('desfavoritar reexibe o botão de excluir', () => {
-    const videos: Video[] = [createVideo()]
-
-    render(<VideoList videos={videos} />)
+  it('desfavoritar reexibe o botão de ocultar', () => {
+    renderVideoList([createVideo()])
 
     const favoriteButton = screen.getByRole('button', { name: /favoritar/i })
 
-    // Favoritar (esconde o botão de ocultar)
     fireEvent.click(favoriteButton)
     expect(screen.queryAllByRole('button', { name: /ocultar/i }).length).toBe(0)
 
-    // Desfavoritar (reexibe o botão de ocultar)
     fireEvent.click(favoriteButton)
-    const deleteButton = screen.getByRole('button', { name: /ocultar/i })
-    expect(deleteButton).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ocultar/i })).toBeInTheDocument()
   })
 
-  it('clicar em excluir pede confirmação e remove o vídeo se confirmado', () => {
-    const videos: Video[] = [createVideo()]
+  it('clicar em ocultar exibe confirmação inline', () => {
+    renderVideoList([createVideo()])
 
-    // Mock window.confirm
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    fireEvent.click(screen.getByRole('button', { name: /ocultar/i }))
 
-    render(<VideoList videos={videos} />)
+    expect(screen.getByRole('button', { name: /confirmar ocultar/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /cancelar/i })).toBeInTheDocument()
+  })
 
-    const deleteButton = screen.getByRole('button', { name: /ocultar/i })
-    fireEvent.click(deleteButton)
+  it('confirmar ocultar remove o vídeo da lista', () => {
+    renderVideoList([createVideo()])
 
-    // Verifica chamadas
-    expect(confirmSpy).toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: /ocultar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /confirmar ocultar/i }))
 
-    // Verifica remoção da UI
     expect(screen.queryByText('Vídeo de teste')).not.toBeInTheDocument()
-
-    // Verifica persistência (assumindo que o componente salva no localStorage)
-    // Nota: O teste real pode precisar limpar o localStorage antes ou ajustar mocks
-    const stored = window.localStorage.getItem('laratube:video-preferences')
-    expect(stored).toContain('"hidden":["video-1"]')
-
-    confirmSpy.mockRestore()
   })
 
-  it('não exibe vídeos marcados como ocultos no carregamento', () => {
-    // Setup initial state in localStorage
-    window.localStorage.setItem(
-      'laratube:video-preferences',
-      JSON.stringify({ favorites: [], hidden: ['video-1'] })
-    )
+  it('cancelar ocultar mantém o vídeo visível', () => {
+    renderVideoList([createVideo()])
 
-    const videos: Video[] = [createVideo({ id: 'video-1', title: 'Hidden Video' }), createVideo({ id: 'video-2', title: 'Visible Video' })]
+    fireEvent.click(screen.getByRole('button', { name: /ocultar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /cancelar/i }))
 
-    render(<VideoList videos={videos} />)
+    expect(screen.getByText('Vídeo de teste')).toBeInTheDocument()
+  })
+
+  it('não exibe vídeos marcados como ocultos', () => {
+    const videos: Video[] = [
+      createVideo({ id: 'video-1', title: 'Hidden Video' }),
+      createVideo({ id: 'video-2', title: 'Visible Video' }),
+    ]
+
+    renderVideoList(videos, { hidden: ['video-1'] })
 
     expect(screen.queryByText('Hidden Video')).not.toBeInTheDocument()
     expect(screen.getByText('Visible Video')).toBeInTheDocument()
   })
 })
-

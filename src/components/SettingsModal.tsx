@@ -1,19 +1,23 @@
-import { FC } from 'react';
-import { clearPreferences } from '../lib/videoPreferences';
+import { FC, useState, useEffect } from 'react';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onClearPreferences: () => void;
 }
 
-const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, onClearPreferences }) => {
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen) setShowConfirm(false);
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
-    const handleClearPreferences = () => {
-        if (window.confirm('Tem certeza que deseja limpar todas as preferências (favoritos e ocultos)? Esta ação não pode ser desfeita.')) {
-            clearPreferences();
-            window.location.reload();
-        }
+    const handleConfirm = () => {
+        onClearPreferences();
+        onClose();
     };
 
     return (
@@ -26,10 +30,26 @@ const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                     </button>
                 </div>
                 <div className="modalBody">
-                    <p>Gerencie as preferências da aplicação.</p>
-                    <button className="clearBtn" onClick={handleClearPreferences}>
-                        Limpar preferências
-                    </button>
+                    {!showConfirm ? (
+                        <>
+                            <p>Gerencie as preferências da aplicação.</p>
+                            <button className="clearBtn" onClick={() => setShowConfirm(true)}>
+                                Limpar preferências
+                            </button>
+                        </>
+                    ) : (
+                        <div className="clearConfirm">
+                            <p>Tem certeza? Favoritos e ocultos serão removidos. Esta ação não pode ser desfeita.</p>
+                            <div className="clearConfirmActions">
+                                <button className="clearBtn" onClick={handleConfirm}>
+                                    Sim, limpar
+                                </button>
+                                <button className="cancelBtn" onClick={() => setShowConfirm(false)}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

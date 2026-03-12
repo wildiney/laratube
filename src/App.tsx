@@ -4,12 +4,25 @@ import VideoList from './components/videoList'
 import SettingsModal from './components/SettingsModal'
 import type { Video } from './model/video'
 import { useState, useEffect } from 'react'
+import { loadPreferences, savePreferences, clearPreferences } from './lib/videoPreferences'
+import type { VideoPreferences } from './lib/videoPreferences'
 
 function App() {
   const [videos, setVideos] = useState<Video[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [preferences, setPreferences] = useState<VideoPreferences>(() => loadPreferences())
+
+  const updatePreferences = (newPrefs: VideoPreferences) => {
+    setPreferences(newPrefs)
+    savePreferences(newPrefs)
+  }
+
+  const handleClearPreferences = () => {
+    clearPreferences()
+    setPreferences(loadPreferences())
+  }
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -60,11 +73,18 @@ function App() {
         </button>
       </header>
       {error ? <p>{error}</p> : null}
-      {loading ? <p>Carregando...</p> : <VideoList videos={videos} />}
+      {loading ? <p>Carregando...</p> : (
+        <VideoList
+          videos={videos}
+          preferences={preferences}
+          onUpdatePreferences={updatePreferences}
+        />
+      )}
 
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        onClearPreferences={handleClearPreferences}
       />
     </>
   )
