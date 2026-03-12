@@ -32,11 +32,13 @@ pnpm run lint         # Run ESLint
 **Stack:** React 19 + TypeScript + Vite, no backend, no UI library, custom CSS only.
 
 **Data flow:**
+
 - `App.tsx` fetches `src/data/videos.json` remotely from GitHub on mount (via `useEffect`)
 - Renders `VideoList` (main grid) and `SettingsModal` (preference management)
 - `VideoList` renders each video card and `VideoModal` (embedded YouTube player)
 
 **Key source files:**
+
 - `src/App.tsx` — root component, data fetching, modal state
 - `src/components/videoList.tsx` — video grid with favorite/hide controls
 - `src/components/VideoModal.tsx` — YouTube embed modal
