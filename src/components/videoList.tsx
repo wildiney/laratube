@@ -8,6 +8,7 @@ import {
   hideVideo as hideVideoPref,
 } from "../lib/videoPreferences";
 import { extractYoutubeId } from "../lib/youtube";
+import { getPlatform } from "../lib/videoPlatform";
 
 interface VideoListProps {
   videos: Video[];
@@ -134,6 +135,7 @@ const VideoList = ({ videos, preferences, onUpdatePreferences, onOpenSettings }:
       {visibleVideos.length > 0 && (
         <div className="videoGrid">
           {visibleVideos.map((video) => {
+            const platform = getPlatform(video.url);
             const videoId = extractYoutubeId(video.url);
             const isFav = preferences.favorites.has(video.id);
             return (
@@ -157,6 +159,11 @@ const VideoList = ({ videos, preferences, onUpdatePreferences, onOpenSettings }:
                         img.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
                       }}
                     />
+                  )}
+                  {platform === "tiktok" && (
+                    <div className="thumbPlaceholder tiktok" aria-hidden="true">
+                      <span className="thumbPlatformLabel">TikTok</span>
+                    </div>
                   )}
                   <div className="playOverlay">
                     <div className="playIcon" aria-hidden="true">

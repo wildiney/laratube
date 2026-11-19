@@ -216,6 +216,30 @@ header h1 {
   transition: transform 0.3s ease;
 }
 
+.thumbPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 0.75rem;
+}
+
+.thumbPlaceholder.tiktok {
+  background: linear-gradient(135deg, #010101 0%, #1a1a1a 55%, #25f4ee33 78%, #fe2c5533 100%);
+}
+
+.thumbPlatformLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.15rem 0.5rem;
+}
+
 .videoCard:hover .videoThumbnail img {
   transform: scale(1.04);
 }
@@ -644,6 +668,14 @@ header h1 {
   height: 100%;
   border-radius: var(--radius-md);
   border: none;
+}
+
+/* TikTok: vertical 9:16 player, centered */
+.videoContainer.vertical iframe {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
 }
 
 /* ─────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { Video } from "../model/video";
-import { isValidYoutubeEmbedUrl } from "../lib/youtube";
+import { getPlatform, getIframeSrc } from "../lib/videoPlatform";
 
 interface VideoModalProps {
   video: Video;
@@ -15,6 +15,9 @@ const VideoModal = ({
   isFavorite,
   onToggleFavorite,
 }: VideoModalProps) => {
+  const platform = getPlatform(video.url);
+  const iframeSrc = getIframeSrc(video.url);
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -47,19 +50,33 @@ const VideoModal = ({
             </button>
           </div>
         </div>
-        <div className="videoContainer">
-          {isValidYoutubeEmbedUrl(video.url) ? (
+        <div className={`videoContainer ${platform === "tiktok" ? "vertical" : ""}`}>
+          {platform === "youtube" && iframeSrc && (
             <iframe
               width="100%"
               height="100%"
-              src={video.url}
+              src={iframeSrc}
               title={video.title}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             ></iframe>
-          ) : (
+          )}
+          {platform === "tiktok" && iframeSrc && (
+            <iframe
+              src={iframeSrc}
+              title={video.title}
+              frameBorder="0"
+              allow="fullscreen; autoplay; encrypted-media"
+              // Blocks popups and top-level navigation, so clicks inside the
+              // player cannot send the user to tiktok.com's endless feed.
+              sandbox="allow-scripts allow-same-origin allow-presentation"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          )}
+          {!platform && (
             <p>URL de vídeo inválida.</p>
           )}
         </div>
